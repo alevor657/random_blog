@@ -80,34 +80,40 @@ class DB():
 
     def get_all(self):
         session = self.DBSession()
-        result = session.query(Posts).join(Posts.categories).all()
+        result = session.query(Posts).filter(Posts.deletion_date == None).\
+                 order_by(Posts.id).all()
         session.close()
         return result
 
     def get(self, id):
         session = self.DBSession()
-        result = session.query(Posts).join(Posts.categories).\
-            filter(Posts.id == id).first()
+        result = session.query(Posts).filter(Posts.id == id,
+                 Posts.deletion_date == None).one()
         session.close()
         return result
 
-    def delete(self):
-        pass
+    def delete(self, id):
+        session = self.DBSession()
+        post = session.query(Posts).get(id)
+        post.deletion_date = datetime.now()
+        session.commit()
+        session.close()
 
     def update(self, np : Posts):
         if np.id == None:
             return
         session = self.DBSession()
-        post = session.query(Posts).filter(Posts.id == np.id)
+        post = session.query(Posts).get(np.id)
         if np.header != None:
-            post.update({'header':np.header})
+            post.header = np.header
         if np.content != None:
-            post.update({'content':np.content})
+            post.content = mp.content
         if np.author != None:
-            post.update({'author':np.author})
+            post.author = np.author
         #if not np.categories
             #post.categories = np.categories
-        post.update({'modification_date':datetime.now()})
+        #post.update({'modification_date':datetime.now()})
+        post.modification_date = datetime.now()
         session.commit()
         session.close()
 

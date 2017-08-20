@@ -18,8 +18,11 @@ class PostsGetHandler(tornado.web.RequestHandler):
             self.write({'posts' : posts})
 
         else:
-            result = db.get(id)
-            self.write(result.toDict())
+            try:
+                result = db.get(id)
+                self.write(result.toDict())
+            except:
+                self.send_error(404)
 
 class PostsPutHandler(tornado.web.RequestHandler):
     def get(self):
@@ -58,7 +61,7 @@ def make_app():
         (r'/', MainHandler),
         (r'/posts/get', PostsGetHandler),
         (r'/posts/get/(\d+)', PostsGetHandler),
-        (r'/posts/put', PostsPutHandler),
+        (r'/posts/add', PostsPutHandler),
         (r'/posts/update/(\d+)', PostsUpdateHandler),
         (r'/posts/delete/(\d+)', PostsDeleteHandler),
         (r'/categories/get', CategoriesHandler)
@@ -69,5 +72,5 @@ if __name__ == "__main__":
     db = database.DB()
     app = make_app()
     app.listen(8888)
-    print('Done')
+    print('Ready')
     tornado.ioloop.IOLoop.current().start()
