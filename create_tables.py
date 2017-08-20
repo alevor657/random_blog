@@ -22,8 +22,7 @@ class Posts(Base):
 
     categories = relationship('Categories',
                    secondary = posts_to_categories_table,
-                   lazy = 'subquery'
-                   #back_populates = 'parents'
+                   #backref = 'parents'
                    )
 
 class Categories(Base):
@@ -31,33 +30,20 @@ class Categories(Base):
     category = Column(String, primary_key = True)
 
     posts = relationship('Posts',
-                    secondary = posts_to_categories_table,
-                    #back_populates = 'children'
-                    )
+               secondary = posts_to_categories_table)
 
-class DB():
-    connect_str = 'postgresql+psycopg2://user:user@localhost:5432/blog'
-    engine = create_engine(connect_str)
-    DBSession = sessionmaker(bind = engine)
+connect_str = 'postgresql+psycopg2://user:user@localhost:5432/blog'
+engine = create_engine(connect_str)
+DBSession = sessionmaker(bind = engine)
 
-    def add(self):
-        pass
+#create tables
+#Base.metadata.create_all(engine)
 
-    def get_all(self):
-        session = self.DBSession()
-        result = session.query(Posts).join(Posts.categories).all()
-        session.close()
-        return result
-
-    def get(self, id):
-        session = self.DBSession()
-        result = session.query(Posts).join(Posts.categories).\
-            filter(Posts.id == id).first()
-        session.close()
-        return result
-
-    def delete(self):
-        pass
-
-    def update(self):
-        pass
+session = DBSession()
+post = Posts(header = 'header2', content = 'cotent2', author = 'author2')
+category = Categories(category = 'category1')
+category2 = Categories(category = 'category2')
+post.categories.append(category)
+post.categories.append(category2)
+session.add(post)
+session.commit()
