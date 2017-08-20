@@ -62,6 +62,11 @@ class Categories(Base):
                     secondary = posts_to_categories_table,
                     )
 
+    def toDict(self):
+        return {
+            'category' : self.category
+        }
+
 class DB():
     connect_str = 'postgresql+psycopg2://user:user@localhost:5432/blog'
     engine = create_engine(connect_str)
@@ -105,3 +110,9 @@ class DB():
         post.update({'modification_date':datetime.now()})
         session.commit()
         session.close()
+
+    def get_categories(self):
+        session = self.DBSession()
+        result = session.query(Categories).all()
+        session.close()
+        return result

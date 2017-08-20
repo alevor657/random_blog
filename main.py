@@ -40,8 +40,18 @@ class PostsUpdateHandler(tornado.web.RequestHandler):
         post = Posts(header, content, author, categories, id)
         db.update(post)
 
+class PostsDeleteHandler(tornado.web.RequestHandler):
+    def get(self, id = None):
+        db.delete(id)
+
 class CategoriesHandler(tornado.web.RequestHandler):
-    pass
+    def get(self):
+        categories = []
+        result = db.get_categories()
+        for r in result:
+            categories.append(r.toDict())
+
+        self.write({'categories': categories})
 
 def make_app():
     return tornado.web.Application([
@@ -50,6 +60,7 @@ def make_app():
         (r'/posts/get/(\d+)', PostsGetHandler),
         (r'/posts/put', PostsPutHandler),
         (r'/posts/update/(\d+)', PostsUpdateHandler),
+        (r'/posts/delete/(\d+)', PostsDeleteHandler),
         (r'/categories/get', CategoriesHandler)
     ])
 
