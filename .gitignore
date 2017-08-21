@@ -1,2 +1,3 @@
-*.txt
+tables.txt
+todo.txt
 __pycache__/database.cpython-36.pyc
