@@ -1,3 +1,6 @@
 tables.txt
 todo.txt
-__pycache__/database.cpython-36.pyc
+api/__pycache__/*
+client/__pycache__/*
+__pycache__/*
+client/api_url.txt

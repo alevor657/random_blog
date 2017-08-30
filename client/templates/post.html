@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %} {{ post.header }} - Random blog {% endblock %}
+{% block content %}
+<!-- header -->
+<div class="blog-header">
+  <h1 class="blog-title">{{ post.header }}</h1>
+  <p class="blog-post-meta">{{ post.creation_date }} by {{ post.author }}</p>
+  {% for category in post.categories %}
+    <bdi class="blog-post-category">{{ category }}</bdi>
+  {% endfor %}
+</div>
+<div class="row">
+  <!-- post column -->
+  <div class="col-sm-8">
+    <p class="blog-post-content">{{ post.content }}</p>
+  </div>
+  <!-- sidebar column -->
+  <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+    <div class="sidebar-module sidebar-module-inset">
+      <h4>Also</h4>
+      <p><a href="/soon">Other posts</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
