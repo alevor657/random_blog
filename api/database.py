@@ -5,7 +5,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
 Base = declarative_base()
-connect_str = 'postgresql+psycopg2://user:user@localhost:5432/blog'
+with open('connect_str.txt', 'r', encoding = 'utf-8') as file:
+    line = file.read()
+    connect_str = line.rstrip()
 engine = create_engine(connect_str)
 DBSession = sessionmaker(bind = engine)
 
@@ -35,7 +37,7 @@ class Posts(Base):
         self.id = id
         self.header = header
         self.content = content
-        self.creation_date = datetime.now()
+        self.creation_date = datetime.now().replace(microsecond=0).isoformat(' ')
         self.author = author
         self.is_deleted = False
 
@@ -83,7 +85,7 @@ class Posts(Base):
         post = session.query(Posts).filter(Posts.id == id,
                  Posts.is_deleted == False).one()
         post.is_deleted = True
-        post.deletion_date = datetime.now()
+        post.deletion_date = datetime.now().replace(microsecond=0).isoformat(' ')
         session.commit()
         session.close()
 
@@ -104,7 +106,7 @@ class Posts(Base):
                 category = session.query(Categories).get(c)
                 post.categories.append(category)
 
-        post.modification_date = datetime.now()
+        post.modification_date = datetime.now().replace(microsecond=0).isoformat(' ')
         session.commit()
         session.close()
 

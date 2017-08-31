@@ -2,8 +2,11 @@ from flask import Flask, render_template, redirect, url_for, abort
 from requests import get
 app = Flask(__name__)
 
+#get api_url
 with open('api_url.txt', 'r', encoding = 'utf-8') as file:
-    api_url = file.read() 
+    line = file.read()
+    api_url = line.rstrip()
+
 @app.route('/')
 def hello():
     return redirect(url_for('home'))
@@ -16,6 +19,10 @@ def show_post(id):
     except:
         abort(404)
     return render_template('post.html', post = post)
+
+@app.route('/post/new')
+def new_post():
+    return redirect(url_for('soon'))
 
 @app.route('/home')
 def home():

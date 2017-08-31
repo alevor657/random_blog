@@ -10,6 +10,9 @@
   <div class="row">
     <!-- posts column -->
     <div class="col-sm-8 blog-main">
+      {% if not posts.posts %}
+      <p class=blog-post-title h2>Nothing here :/</p>
+      {% endif %}
       {% for post in posts.posts %}
       <div class="blog-post">
         <a class="blog-post-title h2" href="/post/{{ post.id }}">{{ post.header }}</a>
@@ -26,6 +29,9 @@
     <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
       <div class="sidebar-module sidebar-module-inset">
         <h4>Categories</h4>
+        {% if not categories.categories %}
+        <p>No categories</p>
+        {% endif %}
         {% for category in categories.categories %}
         <p><a href="soon">{{ category.category }}</a></p>
         {% endfor %}
