@@ -33,8 +33,10 @@ def home():
 @app.route('/category/<int:id>')
 def category(id):
     category = get(api_url + 'categories/get/' + str(id))
+    categories = get(api_url + 'categories/get')
     posts = get(api_url + 'posts/get', data = {'category_id':id})
-    return render_template('category.html', posts = posts.json(), category = category.json())
+    return render_template('category.html', posts = posts.json(), category = category.json(),
+                            categories = categories.json())
 
 @app.route('/categories')
 def categories():

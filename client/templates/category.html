@@ -1,29 +1,28 @@
-{% extends "layout.html" %}
+{% extends "sidebar.html" %}
 {% block title %} {{ category.category }} {% endblock %}
-{% block content %}
+{% block blog_title %}
   <!-- header -->
   <div class="blog-header">
     <h1 class="blog-title">{{ category.category }}</h1>
     <br>
   </div>
-  <div class="row">
+{% endblock %}
+{% block content %}
     <!-- posts column -->
-    <div class="col-sm-8 blog-main">
-      {% if not posts.posts %}
-      <p class=blog-post-title h2>Nothing here :/</p>
-      {% endif %}
-      {% for post in posts.posts %}
-      <div class="blog-post">
-        <a class="blog-post-title h2" href="/post/{{ post.id }}">{{ post.header }}</a>
-        <p class="blog-post-meta">{{ post.creation_date }} by {{ post.author }}</p>
-        {% for category in post.categories %}
-          <bdi class="blog-post-category">{{ category }}</bdi>
-        {% endfor %}
-        <p class="blog-post-content">{{ post.content }}</p>
-      </div>
-      <hr>
+  <div class="col-sm-8 blog-main">
+    {% if not posts.posts %}
+    <p class=blog-post-title h2>Nothing here :/</p>
+    {% endif %}
+    {% for post in posts.posts %}
+    <div class="blog-post">
+      <a class="blog-post-title h2" href="/post/{{ post.id }}">{{ post.header }}</a>
+      <p class="blog-post-meta">{{ post.creation_date }} by {{ post.author }}</p>
+      {% for category in post.categories %}
+        <bdi class="blog-post-category">{{ category }}</bdi>
       {% endfor %}
+      <p class="blog-post-content">{{ post.content }}</p>
     </div>
-    <!-- sidebar -->
+    <hr>
+    {% endfor %}
   </div>
 {% endblock %}
