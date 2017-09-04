@@ -10,17 +10,27 @@ class MainHandler(tornado.web.RequestHandler):
 class PostsGetHandler(tornado.web.RequestHandler):
     def get(self, id = None):
         if id == None:
-            result = Posts.get_all()
+            category = self.get_argument('category_id', default = None)
+
+            if category == None:
+                result = Posts.get_all()
+            else:
+                try:
+                    result = Categories.get_posts(int(category))
+                except:
+                    self.send_error(404)
+
             posts = []
             for post in result:
                 posts.append(post.toDict())
             self.write({'posts' : posts})
+
         else:
             try:
                 post = Posts.get(id)
                 self.write(post.toDict())
             except:
-                self.send_error(400)
+                self.send_error(404)
 
 class PostsAddHandler(tornado.web.RequestHandler):
     def get(self):
@@ -29,7 +39,7 @@ class PostsAddHandler(tornado.web.RequestHandler):
         author =  self.get_argument('author')
         categories = self.get_arguments('categories')
         if not categories:
-            self.send_error(400)
+            self.send_error(404)
         else:
             post = Posts(header, content, author)
             Posts.add(post, categories)
@@ -54,13 +64,21 @@ class PostsDeleteHandler(tornado.web.RequestHandler):
             self.send_error(400)
 
 class CategoriesGetHandler(tornado.web.RequestHandler):
-    def get(self):
-        categories = []
-        result = Categories.get_all()
-        for category in result:
-            categories.append(category.toDict())
+    def get(self, id = None):
+        if id == None:
+            categories = []
+            result = Categories.get_all()
+            for category in result:
+                categories.append(category.toDict())
 
-        self.write({'categories': categories})
+            self.write({'categories': categories})
+
+        else:
+            try:
+                category = Categories.get(id)
+                self.write(category.toDict())
+            except:
+                self.send_error(404)
 
 class CategoriesAddHandler(tornado.web.RequestHandler):
     def get(self):
@@ -77,8 +95,9 @@ def make_app():
         (r'/posts/update/(\d+)', PostsUpdateHandler),
         (r'/posts/delete/(\d+)', PostsDeleteHandler),
         (r'/categories/get', CategoriesGetHandler),
-        (r'/categories/add', CategoriesAddHandler)
-    ])
+        (r'/categories/get/(\d+)', CategoriesGetHandler),
+        (r'/categories/add', CategoriesAddHandler),
+    ], debug = True)
 
 
 if __name__ == "__main__":

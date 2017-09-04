@@ -1,7 +1,7 @@
 from sqlalchemy import Table, Column, ForeignKey, create_engine
 from sqlalchemy import Integer, String, Text, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, joinedload, subqueryload
 from datetime import datetime
 
 Base = declarative_base()
@@ -30,7 +30,7 @@ class Posts(Base):
 
     categories = relationship('Categories',
                               secondary = posts_to_categories_table,
-                              lazy = 'subquery'
+                              lazy = 'joined'
                              )
 
     def __init__(self, header = None, content = None, author = None, id = None):
@@ -116,7 +116,11 @@ class Categories(Base):
     category = Column(String, nullable = False)
 
     posts = relationship('Posts',
-                         secondary = posts_to_categories_table)
+                         secondary = posts_to_categories_table,
+                         primaryjoin = "Categories.id == posts_to_categories.c.category",
+                         secondaryjoin = "and_(posts_to_categories.c.posts_id == Posts.id, "
+                                         "Posts.is_deleted == False)"
+                         )
 
     def __init__(self, category = None, id = None):
         self.category = category
@@ -127,9 +131,24 @@ class Categories(Base):
             'category' : self.category
         }
 
+    def get(id):
+        session = DBSession()
+        category = session.query(Categories).get(id)
+        session.close()
+        return category
+
     def get_all():
         session = DBSession()
         result = session.query(Categories).all()
+        session.close()
+        return result
+    #shit
+    def get_posts(id):
+        session = DBSession()
+        category = session.query(Categories).\
+                   options(joinedload('posts').joinedload('categories')).\
+                   get(id)
+        result = category.posts
         session.close()
         return result
 

@@ -30,13 +30,19 @@ def home():
     categories = get(api_url + 'categories/get')
     return render_template('home.html', posts = posts.json(), categories = categories.json())
 
+@app.route('/category/<int:id>')
+def category(id):
+    category = get(api_url + 'categories/get/' + str(id))
+    posts = get(api_url + 'posts/get', data = {'category_id':id})
+    return render_template('category.html', posts = posts.json(), category = category.json())
+
 @app.route('/categories')
 def categories():
     return redirect(url_for('soon'))
 
 @app.route('/about')
 def about():
-    return redirect(url_for('soon'))
+    return render_template('about.html')
 
 @app.route('/soon')
 def soon():
